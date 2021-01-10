@@ -150,5 +150,5 @@ def parser():
 
 def print_args(args):
     for k, v in vars(args).items():
-        print('{:<16} : {}'.format(k, v))
+        print('{} : {}'.format(k, v))
 

@@ -48,7 +48,7 @@ def get_dataset(args):
                 transforms.ToTensor(),
             ])
         else:
-            assert('wrong learning type')
+            raise NotImplementedError('wrong learning type')
         
         train_dst   = CIFAR10(root='./Data', train=True, download=True,
                                         transform=transform_train,contrastive_learning=learning_type)
@@ -112,7 +112,7 @@ def get_dataset(args):
 
         elif learning_type=='test':
             transform_train = transforms.Compose([
-                transforms.RandomCrop(32, padding=4),
+                transforms.RandomCrop(32, padding=4), # Different from cifar-10
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor()
             ])
@@ -121,7 +121,7 @@ def get_dataset(args):
                 transforms.ToTensor()
             ])
         else:
-            assert('wrong learning type')
+            raise NotImplementedError('wrong learning type')
     
         train_dst   = CIFAR100(root='./Data', train=True, download=True,
                                         transform=transform_train,contrastive_learning=learning_type)

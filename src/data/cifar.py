@@ -81,7 +81,7 @@ class CIFAR10(VisionDataset):
                 if sys.version_info[0] == 2:
                     entry = pickle.load(f)
                 else:
-                    entry = pickle.load(f, encoding='latin1')
+                    entry = pickle.load(f, encoding='latin1') # Encoding for incompatibility issue between python 2 and python 3
                 self.data.append(entry['data'])
                 if 'labels' in entry:
                     self.targets.extend(entry['labels'])
@@ -127,7 +127,7 @@ class CIFAR10(VisionDataset):
 
         # doing this so that it is consistent with all other datasets
         # to return a PIL Image
-        img     = Image.fromarray(img)
+        img = Image.fromarray(img)
         if self.learning_type=='contrastive':
             img_2   = Image.fromarray(img_2)
         elif self.learning_type=='linear_eval':
@@ -135,10 +135,10 @@ class CIFAR10(VisionDataset):
                 img_2 = img.copy()
 
         if self.transform is not None:
-            img     = self.transform(img)
-            if self.learning_type=='contrastive':
-                img_2   = self.transform(img_2)
-            elif self.learning_type=='linear_eval':
+            img = self.transform(img)
+            if self.learning_type == 'contrastive':
+                img_2 = self.transform(img_2)
+            elif self.learning_type == 'linear_eval':
                 if self.train:
                     img_2 = self.transform(img_2)
 

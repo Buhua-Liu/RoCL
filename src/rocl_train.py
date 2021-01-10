@@ -45,7 +45,7 @@ if args.seed != 0:
 
 world_size = args.ngpu
 torch.distributed.init_process_group(
-    'nccl',
+    backend='nccl',
     init_method='env://',
     world_size=world_size,
     rank=args.local_rank,
@@ -53,10 +53,8 @@ torch.distributed.init_process_group(
 
 # Data
 print_status('==> Preparing data..')
-if not (args.train_type=='contrastive'):
-    assert('wrong train phase...')
-else:
-    trainloader, traindst, testloader, testdst ,train_sampler = data_loader.get_dataset(args)
+assert args.train_type=='contrastive', 'Wrong training phase...'
+trainloader, traindst, testloader, testdst ,train_sampler = data_loader.get_dataset(args)
 
 # Model
 print_status('==> Building model..')
@@ -68,7 +66,7 @@ if args.model=='ResNet18':
 elif args.model=='ResNet50':
     expansion=4
 else:
-    assert('wrong model type')
+    raise NotImplementedError('Wrong model type')
 projector = Projector(expansion=expansion)
 
 if 'Rep' in args.advtrain_type:
@@ -79,7 +77,7 @@ if 'Rep' in args.advtrain_type:
     print_status(Rep_info)
     Rep = RepresentationAdv(model, projector, epsilon=args.epsilon, alpha=args.alpha, min_val=args.min, max_val=args.max, max_iters=args.k, _type=args.attack_type, loss_type=args.loss_type, regularize = args.regularize_to)
 else:
-    assert('wrong adversarial train type')
+    raise NotImplementedError('Wrong adversarial training type')
 
 # Model upload to GPU # 
 model.cuda()
@@ -102,7 +100,7 @@ projector   = torch.nn.parallel.DistributedDataParallel(
 cudnn.benchmark = True
 print_status('Using CUDA..')
 
-# Aggregating model parameter & projection parameter #
+# Aggregating model parameter & projector parameter #
 model_params = []
 model_params += model.parameters()
 model_params += projector.parameters()

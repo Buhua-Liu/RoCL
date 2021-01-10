@@ -157,9 +157,9 @@ class RepresentationAdv():
                     scaled_g = torch.sign(grads.data)
                
                 x.data += self.alpha * scaled_g
-
-                x = torch.clamp(x,self.min_val,self.max_val)
+            
                 x = project(x, original_images, self.epsilon, self._type)
+                x = torch.clamp(x,self.min_val,self.max_val)
 
         self.model.train()
         self.projector.train()
