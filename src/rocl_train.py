@@ -121,7 +121,6 @@ def train(epoch):
     projector.train()
 
     train_sampler.set_epoch(epoch)
-    scheduler_warmup.step()
 
     total_loss = 0
     reg_simloss = 0
@@ -170,7 +169,9 @@ def train(epoch):
                 progress_bar(batch_idx, len(trainloader),
                          'Loss: %.3f | Adv: %.3f'
                          % (total_loss/(batch_idx+1), reg_simloss/(batch_idx+1)))
-        
+    
+    scheduler_warmup.step()
+
     return (total_loss/batch_idx, reg_simloss/batch_idx)
 
 
@@ -194,7 +195,7 @@ def test(epoch, train_loss):
 
 
 # Log and saving checkpoint information #
-if not os.path.isdir('results') and args.local_rank % ngpus_per_node == 0:
+if not os.path.exists('results') and args.local_rank % ngpus_per_node == 0:
     os.mkdir('results')
 
 args.name += (args.train_type + '_' +args.model + '_' + args.dataset + '_b' + str(args.batch_size)+'_nGPU'+str(args.ngpu)+'_l'+str(args.lamda))

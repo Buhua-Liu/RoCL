@@ -177,7 +177,7 @@ def checkpoint(model, acc, epoch, args, optimizer, save_name_add=''):
     save_name = './checkpoint/ckpt.t7' + args.name + '_' + str(args.seed)
     save_name += save_name_add
 
-    if not os.path.isdir('./checkpoint'):
+    if not os.path.exists('./checkpoint'):
         os.mkdir('./checkpoint')
     torch.save(state, save_name)
 
