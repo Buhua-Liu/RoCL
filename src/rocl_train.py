@@ -178,15 +178,19 @@ def test(epoch, train_loss):
     model.eval()
     projector.eval()
 
-    # Save at the last epoch #       
-    if epoch == args.epoch - 1 and args.local_rank % ngpus_per_node == 0:
-        checkpoint(model, train_loss, epoch, args, optimizer)
-        checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add='_projector')
+    # Save at every epoch #
+    checkpoint(model, train_loss, epoch, args, optimizer, save_name_add='_epoch_'+str(epoch))
+    checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add=('_projector_epoch_' + str(epoch)))
+
+    # # Save at the last epoch #       
+    # if epoch == args.epoch - 1 and args.local_rank % ngpus_per_node == 0:
+    #     checkpoint(model, train_loss, epoch, args, optimizer)
+    #     checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add='_projector')
        
-    # Save at every 100 epoch #
-    elif epoch % 100 == 0 and args.local_rank % ngpus_per_node == 0:
-        checkpoint(model, train_loss, epoch, args, optimizer, save_name_add='_epoch_'+str(epoch))
-        checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add=('_projector_epoch_' + str(epoch)))
+    # # Save at every 100 epoch #
+    # elif epoch % 100 == 0 and args.local_rank % ngpus_per_node == 0:
+    #     checkpoint(model, train_loss, epoch, args, optimizer, save_name_add='_epoch_'+str(epoch))
+    #     checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add=('_projector_epoch_' + str(epoch)))
 
 
 # Log and saving checkpoint information #
