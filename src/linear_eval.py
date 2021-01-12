@@ -163,7 +163,7 @@ def linear_train(epoch, model, Linear, projector, loptim, attacker=None):
             inputs = ori
 
         if args.adv_img:
-            advinputs      = attacker.perturb(original_images=inputs, labels=target, random_start=args.random_start)
+            advinputs = attacker.perturb(original_images=inputs, labels=target, random_start=args.random_start)
         
         if args.clean:
             total_inputs = inputs
@@ -183,8 +183,7 @@ def linear_train(epoch, model, Linear, projector, loptim, attacker=None):
                 total_targets = target
                 input_flag = True
 
-        if not input_flag:
-            assert('choose the linear evaluation data type (clean, adv_img)')
+        assert input_flag, 'choose the linear evaluation data type (clean, adv_img)'
 
         feat   = model(total_inputs)
         if args.ss:

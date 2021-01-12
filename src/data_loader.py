@@ -50,9 +50,9 @@ def get_dataset(args):
         else:
             raise NotImplementedError('wrong learning type')
         
-        train_dst   = CIFAR10(root='./Data', train=True, download=True,
+        train_dst   = CIFAR10(root='./Dataset', train=True, download=True,
                                         transform=transform_train,contrastive_learning=learning_type)
-        val_dst     = CIFAR10(root='./Data', train=False, download=True,
+        val_dst     = CIFAR10(root='./Dataset', train=False, download=True,
                                        transform=transform_test,contrastive_learning=learning_type)
 
         if learning_type=='contrastive':
@@ -123,9 +123,9 @@ def get_dataset(args):
         else:
             raise NotImplementedError('wrong learning type')
     
-        train_dst   = CIFAR100(root='./Data', train=True, download=True,
+        train_dst   = CIFAR100(root='./Dataset', train=True, download=True,
                                         transform=transform_train,contrastive_learning=learning_type)
-        val_dst     = CIFAR100(root='./Data', train=False, download=True,
+        val_dst     = CIFAR100(root='./Dataset', train=False, download=True,
                                        transform=transform_test,contrastive_learning=learning_type)
 
         if learning_type=='contrastive':

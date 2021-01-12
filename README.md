@@ -18,7 +18,7 @@ To train the model(s) in the paper, run this command:
 
 mkdir Data folder inside the RoCL
 ```makefolder
-mkdir ./Data
+mkdir ./Dataset
 ```
 
 ```train

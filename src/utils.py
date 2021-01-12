@@ -174,7 +174,7 @@ def checkpoint(model, acc, epoch, args, optimizer, save_name_add=''):
         'rng_state': torch.get_rng_state()
     }
 
-    save_name = './checkpoint/ckpt.t7' + args.name + '_' + str(args.seed)
+    save_name = './checkpoint/' + args.name + '_' + str(args.seed)
     save_name += save_name_add
 
     if not os.path.exists('./checkpoint'):
