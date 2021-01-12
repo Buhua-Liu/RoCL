@@ -1,6 +1,4 @@
-#!/usr/bin/env python3 -u
-
-from __future__ import print_function
+#!/usr/bin/env python
 
 import argparse
 import csv
@@ -41,8 +39,7 @@ def print_status(string):
     if args.local_rank % ngpus_per_node == 0:
         print(string)
 
-print_status(torch.cuda.device_count())
-print_status('Using CUDA..')
+print_status(f'Using CUDA with {torch.cuda.device_count()}..')
 
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -52,20 +49,20 @@ if args.seed != 0:
 
 # Data
 print_status('==> Preparing data..')
-if not (args.train_type=='linear_eval'):
-    assert('wrong train phase...')
-else:
-    trainloader, traindst, testloader, testdst  = data_loader.get_dataset(args)
+assert args.train_type=='linear_eval','Wrong train_type...'    
+trainloader, traindst, testloader, testdst  = data_loader.get_dataset(args)
 
 if args.dataset == 'cifar-10' or args.dataset=='mnist':
     num_outputs = 10
 elif args.dataset == 'cifar-100':
     num_outputs = 100
 
-if args.model == 'ResNet50':
-    expansion = 4
+if args.model=='ResNet18':
+    expansion=1
+elif args.model=='ResNet50':
+    expansion=4
 else:
-    expansion = 1
+    raise NotImplementedError('Wrong model type')
 
 # Model
 print_status('==> Building model..')
@@ -77,7 +74,7 @@ def load(args, epoch):
     if epoch == 0:
         add = ''
     else:
-        add = '_epoch_'+str(epoch)
+        add = '_epoch_' + str(epoch)
 
     checkpoint_ = torch.load(args.load_checkpoint+add)
 
@@ -268,7 +265,7 @@ def adjust_lr(epoch, optim):
         param_group['lr'] = lr
 
 ##### Log file for training selected tasks #####
-if not os.path.isdir('results'):
+if not os.path.exists('results'):
     os.mkdir('results')
 
 args.name += ('_Evaluate_'+ args.train_type + '_' +args.model + '_' + args.dataset)
@@ -280,7 +277,7 @@ with open(logname, 'w') as logfile:
     logwriter.writerow(['epoch', 'train acc','test acc'])
 
 if args.epochwise:
-    for k in range(100,1000,100):
+    for k in range(100,1000,50):
         model, linear, projector, loptim, attacker = load(args, k)
         print('loading.......epoch ', str(k))
         ##### Linear evaluation #####

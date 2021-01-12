@@ -1,7 +1,4 @@
-#!/usr/bin/env python3 -u
-
-from __future__ import print_function
-
+#!/usr/bin/env python
 import csv
 import os
 
@@ -53,7 +50,7 @@ torch.distributed.init_process_group(
 
 # Data
 print_status('==> Preparing data..')
-assert args.train_type=='contrastive', 'Wrong training phase...'
+assert args.train_type=='contrastive', 'Wrong train_type'
 trainloader, traindst, testloader, testdst ,train_sampler = data_loader.get_dataset(args)
 
 # Model
@@ -105,9 +102,10 @@ model_params = []
 model_params += model.parameters()
 model_params += projector.parameters()
 
+# Incompatiable
 # LARS optimizer from KAKAO-BRAIN github "pip install torchlars" or git from https://github.com/kakaobrain/torchlars
-base_optimizer  = optim.SGD(model_params, lr=args.lr, momentum=0.9, weight_decay=args.decay)
-optimizer       = LARS(optimizer=base_optimizer, eps=1e-8, trust_coef=0.001)
+optimizer  = optim.SGD(model_params, lr=args.lr, momentum=0.9, weight_decay=args.decay)
+# optimizer       = LARS(optimizer=base_optimizer, eps=1e-8, trust_coef=0.001) 
 
 # Cosine learning rate annealing (SGDR) & Learning rate warmup git from https://github.com/ildoonet/pytorch-gradual-warmup-lr #
 scheduler_cosine = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epoch)
@@ -179,19 +177,15 @@ def test(epoch, train_loss):
     model.eval()
     projector.eval()
 
-    # Save at every epoch #
-    checkpoint(model, train_loss, epoch, args, optimizer, save_name_add='_epoch_'+str(epoch))
-    checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add=('_projector_epoch_' + str(epoch)))
-
-    # # Save at the last epoch #       
-    # if epoch == args.epoch - 1 and args.local_rank % ngpus_per_node == 0:
-    #     checkpoint(model, train_loss, epoch, args, optimizer)
-    #     checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add='_projector')
+    # Save at the last epoch #       
+    if epoch == args.epoch - 1 and args.local_rank % ngpus_per_node == 0:
+        checkpoint(model, train_loss, epoch, args, optimizer)
+        checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add='_projector')
        
-    # # Save at every 100 epoch #
-    # elif epoch % 100 == 0 and args.local_rank % ngpus_per_node == 0:
-    #     checkpoint(model, train_loss, epoch, args, optimizer, save_name_add='_epoch_'+str(epoch))
-    #     checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add=('_projector_epoch_' + str(epoch)))
+    # Save at every 50 epoch #
+    elif epoch % 50 == 0 and args.local_rank % ngpus_per_node == 0:
+        checkpoint(model, train_loss, epoch, args, optimizer, save_name_add='_epoch_'+str(epoch))
+        checkpoint(projector, train_loss, epoch, args, optimizer, save_name_add=('_projector_epoch_' + str(epoch)))
 
 
 # Log and saving checkpoint information #
