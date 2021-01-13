@@ -1,7 +1,4 @@
-#!/usr/bin/env python3 -u
-
-from __future__ import print_function
-
+#!/usr/bin/env python
 import csv
 import os
 
@@ -17,17 +14,11 @@ from collections import OrderedDict
 from attack_lib import FastGradientSignUntargeted
 
 args = test_parser()
-use_cuda = torch.cuda.is_available()
-if use_cuda:
-    ngpus_per_node = torch.cuda.device_count()
 
 def print_status(string):
     if args.local_rank % ngpus_per_node ==0:
         print(string)
 
-if args.local_rank % ngpus_per_node == 0:
-    print(torch.cuda.device_count())
-    print('Using CUDA..')
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
@@ -44,10 +35,12 @@ if args.dataset == 'cifar-10':
 elif args.dataset == 'cifar-100':
     num_outputs = 100
 
-if args.model == 'ResNet50':
-    expansion = 4
+if args.model=='ResNet18':
+    expansion=1
+elif args.model=='ResNet50':
+    expansion=4
 else:
-    expansion = 1
+    raise NotImplementedError('Wrong model type')
 
 # Model
 print_status('==> Building model..')
@@ -82,13 +75,11 @@ Linear.load_state_dict(new_state_dict)
 
 criterion = nn.CrossEntropyLoss()
 
-use_cuda = torch.cuda.is_available()
-if use_cuda:
+if torch.cuda.is_available():
     ngpus_per_node = torch.cuda.device_count()
     model.cuda()
     Linear.cuda()
-    print_status(torch.cuda.device_count())
-    print_status('Using CUDA..')
+    print_status(f'Using CUDA with {torch.cuda.device_count()} GPU(s)..')
     cudnn.benchmark = True
 
 attack_info = 'epsilon_'+str(args.epsilon)+'_alpha_'+ str(args.alpha) + '_min_val_' + str(0.0) + '_max_val_' + str(1.0) + '_max_iters_' + str(args.k) + '_type_' + str(args.attack_type) + '_randomstart_' + str(args.random_start)

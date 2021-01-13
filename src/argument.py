@@ -113,7 +113,7 @@ def parser():
 
     parser.add_argument('--dataset', default='cifar-10', type=str, help='cifar-10/cifar-100')
 
-    parser.add_argument('--load_checkpoint', default='./checkpoint/ckpt.t7one_task_0', type=str, help='PATH TO CHECKPOINT')
+    parser.add_argument('--load_checkpoint', default=None, type=str, help='PATH TO CHECKPOINT')
     parser.add_argument('--resume', '-r', action='store_true',
                         help='resume from checkpoint')
     parser.add_argument('--model', default='ResNet18', type=str,
@@ -131,7 +131,7 @@ def parser():
 
     ##### arguments for distributted parallel #####
     parser.add_argument('--local_rank', type=int, default=0)   
-    parser.add_argument('--ngpu', type=int, default=2)
+    parser.add_argument('--ngpu', type=int, default=4)
 
     ##### arguments for PGD attack & Adversarial Training #####
     parser.add_argument('--min', type=float, default=0.0, help='min for cliping image')

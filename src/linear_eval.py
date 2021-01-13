@@ -39,7 +39,7 @@ def print_status(string):
     if args.local_rank % ngpus_per_node == 0:
         print(string)
 
-print_status(f'Using CUDA with {torch.cuda.device_count()}..')
+print_status(f'Using CUDA with {torch.cuda.device_count()} GPU(s)..')
 
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -185,7 +185,7 @@ def linear_train(epoch, model, Linear, projector, loptim, attacker=None):
 
         assert input_flag, 'choose the linear evaluation data type (clean, adv_img)'
 
-        feat   = model(total_inputs)
+        feat = model(total_inputs)
         if args.ss:
             output_p = projector(feat)
             B = ori.size(0)
